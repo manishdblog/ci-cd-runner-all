@@ -1,0 +1,44 @@
+name: CI-CD for Angular POC
+
+on:
+  workflow_dispatch:   # Manual trigger only
+  # push:
+    # branches:
+      # - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create build folder if not exists
+        shell: powershell
+        run: |
+          if (!(Test-Path "D:/build/angpoc")) {
+            New-Item -ItemType Directory -Force -Path "D:/build/angpoc"
+          }
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          check-latest: true
+
+      - name: Install dependencies
+        shell: powershell
+        working-directory: ./my-angular-app
+        run: npm ci
+
+      - name: Build Angular App
+        shell: powershell
+        working-directory: ./my-angular-app
+        run: npm run build -- --output-path "D:/build/AllAppsBuild/angpoc"
+
+      - name: Verify build output
+        shell: powershell
+        run: |
+          Write-Host "Contents of D:/build/angpoc:"
+          Get-ChildItem -Path "D:/build/AllAppsBuild/angpoc" -Recurse
