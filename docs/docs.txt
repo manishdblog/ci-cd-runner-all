@@ -2,3 +2,17 @@
 
 https://github.com/manishdblog/ci-cd-runner-all
 AUHOBGRQ5OZ6BCLZVAAU6VTIT5T7G
+
+dotnetfw,angular,dotnetcore
+
+
+for homeserver--
+
+./config.cmd --url https://github.com/manishdblog/ci-cd-runner-all --token AUHOBGWCZOA536FJV4ZQUJDIT5376
+
+
+https://github.com/manishdblog/ci-cd-runner-all
+AUHOBGWCZOA536FJV4ZQUJDIT5376
+
+server2
+
