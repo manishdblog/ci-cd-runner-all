@@ -27,6 +27,21 @@ jobs:
         run: msbuild "FTPGitTest.csproj" /t:Restore
         working-directory: ./dotnetfw
 
+      - name: Backup Existing Build
+        run: |
+          $sourcePath = "E:\BuildTest\AllAppsBuild\dotnetfw"
+          $backupRoot = "E:\BuildTest\Backup\dotnetfw"
+          $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+          $backupPath = Join-Path $backupRoot $timestamp
+          
+          if (Test-Path $sourcePath) {
+              New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
+              Copy-Item -Path "$sourcePath\*" -Destination $backupPath -Recurse -Force
+              Write-Host "Backup created at $backupPath"
+          } else {
+              Write-Host "No existing build found to backup."
+          }
+
       - name: Build and Publish
         run: |
           msbuild "FTPGitTest.csproj" `
