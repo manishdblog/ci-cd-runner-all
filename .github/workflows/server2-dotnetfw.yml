@@ -32,6 +32,6 @@ jobs:
           msbuild "FTPGitTest.csproj" `
             /p:Configuration=Release `
             /p:DeployOnBuild=true `
-            /p:PublishProfile=FolderProfile `
+            /p:PublishProfile=FolderProfile1 `
             /p:PublishDir=E:\BuildTest\AllAppsBuild\dotnetfw\
         working-directory: ./dotnetfw
