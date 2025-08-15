@@ -1,0 +1,6 @@
+@sln_cicdcoreapp_HostAddress = http://localhost:5032
+
+GET {{sln_cicdcoreapp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
