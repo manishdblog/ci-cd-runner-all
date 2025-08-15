@@ -2,11 +2,6 @@ name: server2-dotnetfw
 
 on:
   workflow_dispatch: # Manual trigger only
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'dotnetfw/**'
 
 jobs:
   build:
@@ -27,26 +22,43 @@ jobs:
         run: msbuild "FTPGitTest.csproj" /t:Restore
         working-directory: ./dotnetfw
 
-      - name: Backup Existing Build
+      - name: Backup and Build with Rollback
         run: |
           $sourcePath = "E:\BuildTest\AllAppsBuild\dotnetfw"
           $backupRoot = "E:\BuildTest\Backup\dotnetfw"
           $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
           $backupPath = Join-Path $backupRoot $timestamp
-          
-          if (Test-Path $sourcePath) {
-              New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
-              Copy-Item -Path "$sourcePath\*" -Destination $backupPath -Recurse -Force
-              Write-Host "Backup created at $backupPath"
-          } else {
-              Write-Host "No existing build found to backup."
-          }
 
-      - name: Build and Publish
-        run: |
-          msbuild "FTPGitTest.csproj" `
-            /p:Configuration=Release `
-            /p:DeployOnBuild=true `
-            /p:PublishProfile=FolderProfile1 `
-            /p:PublishDir=E:\BuildTest\AllAppsBuild\dotnetfw\
+          try {
+              # Backup existing build
+              if (Test-Path $sourcePath) {
+                  New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
+                  Copy-Item -Path "$sourcePath\*" -Destination $backupPath -Recurse -Force
+                  Write-Host "Backup created at $backupPath"
+              } else {
+                  Write-Host "No existing build found to backup."
+              }
+
+              # Run build & publish
+              msbuild "FTPGitTest.csproj" `
+                /p:Configuration=Release `
+                /p:DeployOnBuild=true `
+                /p:PublishProfile=FolderProfile1 `
+                /p:PublishDir=$sourcePath `
+                /verbosity:minimal
+
+              Write-Host "✅ Build and publish completed successfully."
+          }
+          catch {
+              Write-Host "❌ Build or publish failed. Restoring previous backup..."
+              if (Test-Path $backupPath) {
+                  Remove-Item -Path $sourcePath -Recurse -Force -ErrorAction SilentlyContinue
+                  New-Item -ItemType Directory -Force -Path $sourcePath | Out-Null
+                  Copy-Item -Path "$backupPath\*" -Destination $sourcePath -Recurse -Force
+                  Write-Host "Rollback completed. Restored from backup: $backupPath"
+              } else {
+                  Write-Host "⚠ No backup found to restore."
+              }
+              exit 1  # Fail the job
+          }
         working-directory: ./dotnetfw
