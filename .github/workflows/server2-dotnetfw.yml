@@ -24,8 +24,8 @@ jobs:
 
       - name: Backup and Build with Rollback
         run: |
-          $sourcePath = "E:\BuildTest\AllAppsBuild\dotnetfw"
-          $backupRoot = "E:\BuildTest\Backup\dotnetfw"
+          $sourcePath = "E:\BuildTest\AllAppsBuild\dotnetfrm"
+          $backupRoot = "E:\BuildTest\Backup\dotnetfrm"
           $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
           $backupPath = Join-Path $backupRoot $timestamp
 
