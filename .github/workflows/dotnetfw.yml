@@ -1,0 +1,44 @@
+name: publish-on-local-dotnetfw
+
+on:
+  workflow_dispatch: # Manual trigger only
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'dotnetfw/**'
+
+jobs:
+  build:
+    runs-on: [self-hosted, dotnetfw] # Use label if you set one during runner setup
+
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Download NuGet CLI
+        run: |
+          $nugetPath = "D:\gitrunner\nuget.exe"
+          if (!(Test-Path $nugetPath)) {
+            Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $nugetPath
+          }
+
+      - name: Restore NuGet Packages
+        run: D:\gitrunner\nuget.exe restore FTPGitTest.csproj
+        working-directory: ./dotnetfw
+
+      - name: Build and Publish
+        run: |
+          msbuild "FTPGitTest.csproj" `
+            /p:Configuration=Release `
+            /p:DeployOnBuild=true `
+            /p:PublishProfile=FolderProfile `
+            /p:PublishDir=D:\build\AllAppsBuild\dotnetfw\
+        working-directory: ./dotnetfw
