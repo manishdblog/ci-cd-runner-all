@@ -1,0 +1,72 @@
+./config.cmd --url https://github.com/manishdblog/ci-cd-runner-angpoc --token AUHOBGRAG6ALVC6ERID6MN3ITX7PG
+
+
+cd /d D:\allgitrunners\ci-cd-runner-angpoc
+.\svc install GitHubRunner_AngPOC
+svc install ci-cd-runner-angpoc
+svc start ci-cd-runner-angpoc
+
+
+***88pwershel
+cd "D:\allgitrunners\ci-cd-runner-angpoc"
+.\svc install GitHubRunner_AngPOC
+
+
+cd "D:\allgitrunners\ci-cd-runner-angpoc"
+.\svc install ci-cd-runner-angpoc
+
+
+cd "D:\allgitrunners\ci-cd-runner-angpoc_new"
+.\bin\Runner.Listener.exe svc install
+.\svc start GitHubRunner_AngPOC
+
+sc create MyCustomRunner_AngPOC binPath= "D:\allgitrunners\ci-cd-runner-angpoc_new\bin\Runner.Listener.exe" 
+
+run --startuptype service" start= auto
+
+sc start MyCustomRunner_AngPOC
+sc delete MyCustomRunner_AngPOC
+
+svc install
+cd "D:\allgitrunners\ci-cd-runner-angpoc_new\bin"
+sc create "ci-cd-angpoc" binPath= "D:\allgitrunners\ci-cd-runner-angpoc_new\bin\RunnerService.exe"
+
+cd D:\GitHubActions\SelfHostedRunner   # Change path to your runner folder
+
+by Powesheel
+
+New-Service -Name "ci-cd-angpoc" `
+            -BinaryPathName "D:\allgitrunners\ci-cd-runner-angpoc_new\bin\RunnerService.exe" `
+            -DisplayName "ci-cd-runner-angpoc_new" `
+            -StartupType Automatic
+
+
+set the job as Network Service
+
+git config --system --add safe.directory "D:/allgitrunners/ci-cd-runner-angpoc_new/_work/ci-cd-runner-angpoc/ci-cd-runner-angpoc"
+
+
+
+
+
+
+Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.327.1/actions-runner-win-x64-2.327.1.zip -OutFile actions-runner-win-x64-2.327.1.zip
+
+
+
+*************************8
+
+ci-cd-runner-coreapp
+
+# Create a folder under the drive root
+$ mkdir actions-runner; cd actions-runner# Download the latest runner package
+$ Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.327.1/actions-runner-win-x64-2.327.1.zip -OutFile actions-runner-win-x64-2.327.1.zip# Optional: Validate the hash
+$ if((Get-FileHash -Path actions-runner-win-x64-2.327.1.zip -Algorithm SHA256).Hash.ToUpper() -ne '7179db618e7f79e0ce63d96b15f3b6cf6e69996b2094f7f02208b7786c50b6a3'.ToUpper()){ throw 'Computed checksum did not match' }# Extract the installer
+$ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-2.327.1.zip", "$PWD")
+
+
+
+https://github.com/manishdblog/ci-cd-runner-coreapp
+AUHOBGVNRSW3C2PBDR6236TIT3ENE
+
+./config.cmd --url https://github.com/manishdblog/ci-cd-runner-coreapp --token AUHOBGVNRSW3C2PBDR6236TIT3ENE
