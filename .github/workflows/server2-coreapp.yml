@@ -6,21 +6,19 @@ on:
     branches:
       - main
     paths:
-      - 'codebase/**'   # Only run when .NET Core app changes
-      - '.github/workflows/cicd-dotnetcore.yml'  # If workflow changes
+      - 'codebase/**'
+      - '.github/workflows/cicd-dotnetcore.yml'
 
 jobs:
   build-and-copy:
-    runs-on: [self-hosted, server2]  # Target the runner with "dotnetcore" label
+    runs-on: [self-hosted, server2]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+      - name: Check .NET Version
+        run: dotnet --version
 
       - name: Restore Dependencies
         run: dotnet restore "codebase/sln_cicdcoreapp.sln"
