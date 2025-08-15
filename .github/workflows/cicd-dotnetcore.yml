@@ -1,0 +1,42 @@
+name: Build .NET 8 Core API and Copy to Local Folder
+
+on:
+  workflow_dispatch:   # Manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - 'codebase/**'   # Only run when .NET Core app changes
+      - '.github/workflows/cicd-dotnetcore.yml'  # If workflow changes
+
+jobs:
+  build-and-copy:
+    runs-on: [self-hosted, dotnetcore]  # Target the runner with "dotnetcore" label
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore "codebase/sln_cicdcoreapp.sln"
+
+      - name: Build Project
+        run: dotnet build "codebase/sln_cicdcoreapp.sln" --configuration Release --no-restore
+
+      - name: Publish Project
+        run: dotnet publish "codebase/sln_cicdcoreapp.sln" --configuration Release --output ./publish --no-build
+
+      - name: Copy Published Files to Local Folder
+        shell: powershell
+        run: |
+          $target = "D:\build\AllAppsBuild\corepoc"
+          if (Test-Path $target) {
+              Remove-Item $target -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $target | Out-Null
+          Copy-Item -Path ".\publish\*" -Destination $target -Recurse -Force
