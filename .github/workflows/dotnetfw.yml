@@ -23,15 +23,8 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
 
-      - name: Download NuGet CLI
-        run: |
-          $nugetPath = "D:\gitrunner\nuget.exe"
-          if (!(Test-Path $nugetPath)) {
-            Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $nugetPath
-          }
-
       - name: Restore NuGet Packages
-        run: D:\gitrunner\nuget.exe restore FTPGitTest.csproj
+        run: msbuild "FTPGitTest.csproj" /t:Restore
         working-directory: ./dotnetfw
 
       - name: Build and Publish
