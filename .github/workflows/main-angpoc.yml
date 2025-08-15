@@ -1,10 +1,13 @@
 name: CI-CD for Angular POC
 
 on:
-  workflow_dispatch:   # Manual trigger only
-  # push:
-    # branches:
-      # - main
+  workflow_dispatch:   # Manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - 'my-angular-app/**'   # Only run if files in Angular folder change
+      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
 
 jobs:
   build:
@@ -17,8 +20,8 @@ jobs:
       - name: Create build folder if not exists
         shell: powershell
         run: |
-          if (!(Test-Path "D:/build/angpoc")) {
-            New-Item -ItemType Directory -Force -Path "D:/build/angpoc"
+          if (!(Test-Path "D:/build/AllAppsBuild/angpoc")) {
+            New-Item -ItemType Directory -Force -Path "D:/build/AllAppsBuild/angpoc"
           }
 
       - name: Install Node.js
@@ -40,5 +43,5 @@ jobs:
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "Contents of D:/build/angpoc:"
+          Write-Host "Contents of D:/build/AllAppsBuild/angpoc:"
           Get-ChildItem -Path "D:/build/AllAppsBuild/angpoc" -Recurse
