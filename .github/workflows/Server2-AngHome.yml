@@ -1,4 +1,4 @@
-name: CI-CD for Angular POC-HomeServer2
+name: Server2-Angular POC-HomeServer2
 
 on:
   workflow_dispatch:   # Manual trigger
