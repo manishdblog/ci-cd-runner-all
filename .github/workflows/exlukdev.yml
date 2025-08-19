@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-angular:
-    runs-on: self-hosted   # Windows Server 2019 runner
+    runs-on: [self-hosted,exlukdev]   # Windows Server 2019 runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
