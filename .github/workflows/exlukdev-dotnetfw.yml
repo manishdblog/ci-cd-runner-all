@@ -1,0 +1,37 @@
+name: exlukdev-dotnetfw
+
+on:
+  workflow_dispatch: # Manual trigger only
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'dotnetfw/**'
+
+jobs:
+  build:
+    runs-on: [self-hosted, dotnetfw] # Use label if you set one during runner setup
+
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Restore NuGet Packages
+        run: msbuild "FTPGitTest.csproj" /t:Restore
+        working-directory: ./dotnetfw
+
+      - name: Build and Publish
+        run: |
+          msbuild "FTPGitTest.csproj" `
+            /p:Configuration=Release `
+            /p:DeployOnBuild=true `
+            /p:PublishProfile=FolderProfile `
+            /p:PublishDir=D:\build\AllAppsBuild\dotnetfw\
+        working-directory: ./dotnetfw
