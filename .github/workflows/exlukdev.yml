@@ -1,4 +1,4 @@
-name: "EXLUKDEV-Angular POC-EXLUKDEV"
+name: ExlServer-Angular POC-ExlServer
 
 on:
   workflow_dispatch:   # Manual trigger
@@ -6,35 +6,22 @@ on:
     branches:
       - main
     paths:
-      - 'my-angular-app/**'
-      - '.github/workflows/ci-cd-angular.yml'
+      - 'my-angular-app/**'   # Only run if files in Angular folder change
+      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
 
 jobs:
   build:
-    runs-on: [self-hosted, exlukdev]
+    runs-on: [self-hosted,exlukdev]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # ✅ Extract tar.gz safely on Windows Server 2019
-      - name: Extract source (if tar.gz exists)
-        shell: powershell
-        run: |
-          $archive = "D:/GitRunner/mdtestgit/_work/ci-cd-runner-all/ci-cd-runner-all/67f6960e-c717-4e79-8cc0-dbcc94a90637.tar.gz"
-          $dest = "D:/GitRunner/mdtestgit/_work/ci-cd-runner-all/ci-cd-runner-all/67f6960e-c717-4e79-8cc0-dbcc94a90637"
-          if (Test-Path $archive) {
-            Write-Host "Extracting $archive..."
-            tar -xzf $archive -C $dest
-          } else {
-            Write-Host "No tar.gz archive found. Skipping extraction."
-          }
-
       - name: Create build folder if not exists
         shell: powershell
         run: |
-          if (!(Test-Path "D:/BuildTest/AllAppsBuild/angpoc")) {
-            New-Item -ItemType Directory -Force -Path "D:/BuildTest/AllAppsBuild/angpoc"
+          if (!(Test-Path "D:/build/AllAppsBuild/angpoc")) {
+            New-Item -ItemType Directory -Force -Path "D:/build/AllAppsBuild/angpoc"
           }
 
       - name: Install Node.js
@@ -51,10 +38,10 @@ jobs:
       - name: Build Angular App
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm run build -- --output-path "D:/BuildTest/AllAppsBuild/angpoc"
+        run: npm run build -- --output-path "E:/BuildTest//AllAppsBuild/angpoc"
 
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "✅ Contents of D:/BuildTest/AllAppsBuild/angpoc:"
-          Get-ChildItem -Path "D:/BuildTest/AllAppsBuild/angpoc" -Recurse
+          Write-Host "Contents of E:/BuildTest/AllAppsBuild/angpoc:"
+          Get-ChildItem -Path "E:/BuildTest/AllAppsBuild/angpoc" -Recurse
