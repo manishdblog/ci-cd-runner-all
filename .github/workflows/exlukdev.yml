@@ -1,4 +1,4 @@
-name: Build & Publish Angular
+name: Build & Publish Angular-ExlUK
 
 on:
   workflow_dispatch:   # manual trigger
