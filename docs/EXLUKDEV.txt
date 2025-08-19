@@ -4,3 +4,29 @@ new
 ./config.cmd --url https://github.com/manishdblog/ci-cd-runner-all --token AUHOBGQKE4IQY7GMBFUPPEDIUS3I4
 
 exlukdev
+
+
+
+# Set paths (adjust if needed)
+$solutionPath = "D:\GitHubRunners\ci-cd-runner-all\dotnetfw\YourSolution.sln"
+$packagesPath = "D:\GitHubRunners\ci-cd-runner-all\dotnetfw\packages"
+
+Write-Host "Cleaning old NuGet packages..."
+if (Test-Path $packagesPath) {
+    Remove-Item -Recurse -Force $packagesPath
+    Write-Host "Deleted old packages folder."
+}
+
+Write-Host "Restoring NuGet packages..."
+# Use nuget.exe if available, otherwise use MSBuild restore
+$nugetExe = "D:\nuget\nuget.exe"   # Update if your nuget.exe is elsewhere
+
+if (Test-Path $nugetExe) {
+    & $nugetExe restore $solutionPath -PackagesDirectory $packagesPath
+} else {
+    # Fall back to msbuild restore
+    msbuild $solutionPath /t:Restore /p:RestorePackagesPath=$packagesPath
+}
+
+Write-Host "NuGet restore completed."
+
