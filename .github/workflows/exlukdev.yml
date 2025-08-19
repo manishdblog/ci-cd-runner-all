@@ -1,47 +1,50 @@
-name: ExlServer-Angular POC-ExlServer
+name: Build & Publish Angular
 
 on:
-  workflow_dispatch:   # Manual trigger
+  workflow_dispatch:   # manual trigger
   push:
     branches:
       - main
-    paths:
-      - 'my-angular-app/**'   # Only run if files in Angular folder change
-      - '.github/workflows/ci-cd-angular.yml'  # Run if workflow changes
 
 jobs:
   build-angular:
-    runs-on: [self-hosted, exlukdev]
-
+    runs-on: self-hosted   # Windows Server 2019 runner
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Create build folder if not exists
-        shell: powershell
-        run: |
-          if (!(Test-Path "E:/BuildTest/AllAppsBuild/angpoc")) {
-            New-Item -ItemType Directory -Force -Path "E:/BuildTest/AllAppsBuild/angpoc"
-          }
-
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          check-latest: true
 
       - name: Install dependencies
-        shell: powershell
-        working-directory: ./my-angular-app
         run: npm install
 
-      - name: Build Angular App
-        shell: powershell
-        working-directory: ./my-angular-app
-        run: npm run build -- --output-path "E:/BuildTest/AllAppsBuild/angpoc"
+      - name: Build Angular
+        run: npm run build --prod
 
-      - name: Verify build output
-        shell: powershell
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-dist
+          path: dist/
+          archive-format: zip   # 👈 Fix for Windows PowerShell issue
+
+  deploy-angular:
+    runs-on: self-hosted
+    needs: build-angular
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: angular-dist
+          path: dist
+          archive-format: zip   # 👈 Fix for Windows PowerShell issue
+
+      - name: Deploy to server folder
         run: |
-          Write-Host "Build completed. Files in output folder:"
-          Get-ChildItem -Path "E:/BuildTest/AllAppsBuild/angpoc" -Recurse
+          $target = "D:\Deployments\AngularApp"
+          if (Test-Path $target) { Remove-Item $target -Recurse -Force }
+          New-Item -ItemType Directory -Path $target
+          Copy-Item "dist\*" $target -Recurse
