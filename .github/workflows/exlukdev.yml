@@ -1,50 +1,47 @@
-name: Build & Publish Angular-ExlUK
+name: ExlUK-Angular POC-ExlUK
 
 on:
-  workflow_dispatch:   # manual trigger
+  workflow_dispatch:   # Manual trigger
   push:
     branches:
       - main
+    paths:
+      - 'my-angular-app/**'   # Only run if files in Angular folder change
+      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
 
 jobs:
-  build-angular:
-    runs-on: [self-hosted, exlukdev]   # Windows Server 2019 runner
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  build:
+    runs-on: [self-hosted,exlukdev]
 
-      - name: Setup Node.js
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create build folder if not exists
+        shell: powershell
+        run: |
+          if (!(Test-Path "D:/build/AllAppsBuild/angpoc")) {
+            New-Item -ItemType Directory -Force -Path "D:/build/AllAppsBuild/angpoc"
+          }
+
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          check-latest: true
 
       - name: Install dependencies
-        run: npm install
+        shell: powershell
+        working-directory: ./my-angular-app
+        run: npm ci
 
-      - name: Build Angular
-        run: npm run build -- --configuration production
+      - name: Build Angular App
+        shell: powershell
+        working-directory: ./my-angular-app
+        run: npm run build -- --output-path "E:/BuildTest//AllAppsBuild/angpoc"
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: angular-dist
-          path: dist/
-          if-no-files-found: error   # fails early if dist is missing
-
-  deploy-angular:
-    runs-on: [self-hosted, exlukdev]
-    needs: build-angular
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: angular-dist
-          path: dist
-
-      - name: Deploy to server folder
-        shell: pwsh
+      - name: Verify build output
+        shell: powershell
         run: |
-          $target = "D:\Deployments\AngularApp"
-          if (Test-Path $target) { Remove-Item $target -Recurse -Force }
-          New-Item -ItemType Directory -Path $target | Out-Null
-          Copy-Item "dist\*" $target -Recurse -Force
+          Write-Host "Contents of E:/BuildTest/AllAppsBuild/angpoc:"
+          Get-ChildItem -Path "E:/BuildTest/AllAppsBuild/angpoc" -Recurse
