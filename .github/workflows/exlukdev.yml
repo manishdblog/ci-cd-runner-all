@@ -56,5 +56,5 @@ jobs:
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "Contents of D:/BuildTest/AllAppsBuild/angpoc:"
+          Write-Host "✅ Contents of D:/BuildTest/AllAppsBuild/angpoc:"
           Get-ChildItem -Path "D:/BuildTest/AllAppsBuild/angpoc" -Recurse
