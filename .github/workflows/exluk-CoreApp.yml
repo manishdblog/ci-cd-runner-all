@@ -1,0 +1,40 @@
+name: exluk-CoreApp
+
+on:
+  workflow_dispatch:   # Manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - 'codebase/**'
+      - '.github/workflows/cicd-dotnetcore.yml'
+
+jobs:
+  build-and-copy:
+    runs-on: [self-hosted, exlukdev]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Check .NET Version
+        run: dotnet --version
+
+      - name: Restore Dependencies
+        run: dotnet restore "codebase/sln_cicdcoreapp.sln"
+
+      - name: Build Project
+        run: dotnet build "codebase/sln_cicdcoreapp.sln" --configuration Release --no-restore
+
+      - name: Publish Project
+        run: dotnet publish "codebase/sln_cicdcoreapp.sln" --configuration Release --output ./publish --no-build
+
+      - name: Copy Published Files to Local Folder
+        shell: powershell
+        run: |
+          $target = "E:\BuildTest\AllAppsBuild\corepoc"
+          if (Test-Path $target) {
+              Remove-Item $target -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $target | Out-Null
+          Copy-Item -Path ".\publish\*" -Destination $target -Recurse -Force
