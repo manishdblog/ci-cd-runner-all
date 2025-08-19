@@ -30,3 +30,28 @@ if (Test-Path $nugetExe) {
 
 Write-Host "NuGet restore completed."
 
+
+************
+# Path to your solution file (.sln)
+$solutionPath = "D:\gitrunner\ukt\_work\ci-cd-runner-all\ci-cd-runner-all\Sln_NITWebAPI.sln"
+
+# Ensure NuGet.exe is available
+$nugetExe = "D:\gitrunner\nuget.exe"
+if (!(Test-Path $nugetExe)) {
+    Write-Host "Downloading NuGet.exe..."
+    Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $nugetExe
+}
+
+# Clear old packages folder (optional)
+$packagesFolder = "D:\gitrunner\ukt\_work\ci-cd-runner-all\ci-cd-runner-all\packages"
+if (Test-Path $packagesFolder) {
+    Remove-Item -Recurse -Force $packagesFolder
+}
+
+# Restore packages
+Write-Host "Restoring NuGet packages..."
+& $nugetExe restore $solutionPath -PackagesDirectory $packagesFolder -NonInteractive -Verbosity detailed
+
+Write-Host "NuGet restore complete."
+
+
