@@ -1,3 +1,6 @@
 ./config.cmd --url https://github.com/manishdblog/ci-cd-runner-all --token AUHOBGWV4CYQ6WK5NLVO6Y3IUSOLA
 
+new
+./config.cmd --url https://github.com/manishdblog/ci-cd-runner-all --token AUHOBGQKE4IQY7GMBFUPPEDIUS3I4
+
 exlukdev
