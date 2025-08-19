@@ -2,7 +2,6 @@ name: ExlUK-Angular POC-ExlUK
 
 on:
   workflow_dispatch:   # Manual trigger
-  
 
 jobs:
   build:
@@ -15,9 +14,11 @@ jobs:
       - name: Create build folder if not exists
         shell: powershell
         run: |
+          $ErrorActionPreference = "Stop"
           if (!(Test-Path "D:/build/AllAppsBuild/angpoc")) {
             New-Item -ItemType Directory -Force -Path "D:/build/AllAppsBuild/angpoc"
           }
+          Write-Host "✅ Build folder verified: D:/build/AllAppsBuild/angpoc"
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -28,15 +29,22 @@ jobs:
       - name: Install dependencies
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm ci
+        run: |
+          $ErrorActionPreference = "Stop"
+          Write-Host "📦 Running npm ci..."
+          npm ci || exit $LASTEXITCODE
 
       - name: Build Angular App
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm run build -- --output-path "D:/build/AllAppsBuild/angpoc"
+        run: |
+          $ErrorActionPreference = "Stop"
+          Write-Host "🏗️ Building Angular app..."
+          npm run build -- --output-path "D:/build/AllAppsBuild/angpoc" || exit $LASTEXITCODE
 
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "Contents of D:/build/AllAppsBuild/angpoc:"
+          $ErrorActionPreference = "Stop"
+          Write-Host "📂 Contents of D:/build/AllAppsBuild/angpoc:"
           Get-ChildItem -Path "D:/build/AllAppsBuild/angpoc" -Recurse
