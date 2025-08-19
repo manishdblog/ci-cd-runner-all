@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-angular:
-    runs-on: [self-hosted,exlukdev]   # Windows Server 2019 runner
+    runs-on: [self-hosted, exlukdev]   # Windows Server 2019 runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,17 +22,17 @@ jobs:
         run: npm install
 
       - name: Build Angular
-        run: npm run build --prod
+        run: npm run build -- --configuration production
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
           path: dist/
-          archive-format: zip   # 👈 Fix for Windows PowerShell issue
+          archive-format: zip   # Fix for Windows PowerShell issue
 
   deploy-angular:
-    runs-on: self-hosted
+    runs-on: [self-hosted, exlukdev]
     needs: build-angular
     steps:
       - name: Download build artifacts
@@ -40,11 +40,12 @@ jobs:
         with:
           name: angular-dist
           path: dist
-          archive-format: zip   # 👈 Fix for Windows PowerShell issue
+          archive-format: zip   # Fix for Windows PowerShell issue
 
       - name: Deploy to server folder
+        shell: pwsh
         run: |
           $target = "D:\Deployments\AngularApp"
           if (Test-Path $target) { Remove-Item $target -Recurse -Force }
-          New-Item -ItemType Directory -Path $target
-          Copy-Item "dist\*" $target -Recurse
+          New-Item -ItemType Directory -Path $target | Out-Null
+          Copy-Item "dist\*" $target -Recurse -Force
