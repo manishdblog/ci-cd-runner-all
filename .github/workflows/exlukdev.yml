@@ -7,10 +7,10 @@ on:
       - main
     paths:
       - 'my-angular-app/**'   # Only run if files in Angular folder change
-      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
+      - '.github/workflows/ci-cd-angular.yml'  # Run if workflow changes
 
 jobs:
-  build:
+  build-angular:
     runs-on: [self-hosted, exlukdev]
 
     steps:
@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm ci
+        run: npm install
 
       - name: Build Angular App
         shell: powershell
@@ -43,5 +43,5 @@ jobs:
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "Contents of E:/BuildTest/AllAppsBuild/angpoc:"
+          Write-Host "Build completed. Files in output folder:"
           Get-ChildItem -Path "E:/BuildTest/AllAppsBuild/angpoc" -Recurse
