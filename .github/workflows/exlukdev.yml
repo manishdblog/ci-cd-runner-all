@@ -29,7 +29,7 @@ jobs:
         with:
           name: angular-dist
           path: dist/
-          archive-format: zip   # Fix for Windows PowerShell issue
+          if-no-files-found: error   # fails early if dist is missing
 
   deploy-angular:
     runs-on: [self-hosted, exlukdev]
@@ -40,7 +40,6 @@ jobs:
         with:
           name: angular-dist
           path: dist
-          archive-format: zip   # Fix for Windows PowerShell issue
 
       - name: Deploy to server folder
         shell: pwsh
