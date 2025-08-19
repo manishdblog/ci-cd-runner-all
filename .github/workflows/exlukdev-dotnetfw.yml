@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, dotnetfw] # Use label if you set one during runner setup
+    runs-on: [self-hosted, exlukdev] # Use label if you set one during runner setup
 
     defaults:
       run:
