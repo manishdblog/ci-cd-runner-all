@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'my-angular-app/**'   # Only run if files in Angular folder change
-      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
+      - 'my-angular-app/**'
+      - '.github/workflows/ci-cd-angular.yml'
 
 jobs:
   build:
@@ -17,13 +17,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # ✅ Extract tar.gz safely on Windows Server 2019
       - name: Extract source (if tar.gz exists)
         shell: powershell
         run: |
           $archive = "D:/GitRunner/mdtestgit/_work/ci-cd-runner-all/ci-cd-runner-all/67f6960e-c717-4e79-8cc0-dbcc94a90637.tar.gz"
           $dest = "D:/GitRunner/mdtestgit/_work/ci-cd-runner-all/ci-cd-runner-all/67f6960e-c717-4e79-8cc0-dbcc94a90637"
           if (Test-Path $archive) {
-            Write-Host "Extracting tar.gz archive..."
+            Write-Host "Extracting $archive..."
             tar -xzf $archive -C $dest
           } else {
             Write-Host "No tar.gz archive found. Skipping extraction."
