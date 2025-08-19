@@ -3,10 +3,10 @@ name: exlukdev-dotnetfw
 on:
   workflow_dispatch: # Manual trigger only
   # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'dotnetfw/**'
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'dotnetfw/**'
 
 jobs:
   build:
@@ -28,6 +28,10 @@ jobs:
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
+
+      # ➡️ ADD THIS STEP ⬅️
+      - name: Create Publish Directory
+        run: New-Item -ItemType Directory -Force -Path "D:\build\AllAppsBuild\dotnetfw"
 
       - name: Build and Publish
         run: |
