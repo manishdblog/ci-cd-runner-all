@@ -1,4 +1,4 @@
-name: EXLUKDEV-Angular POC-EXLUKDEV
+name: "EXLUKDEV-Angular POC-EXLUKDEV"
 
 on:
   workflow_dispatch:   # Manual trigger
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted,exlukdev]
+    runs-on: [self-hosted, exlukdev]
 
     steps:
       - name: Checkout code
@@ -38,10 +38,10 @@ jobs:
       - name: Build Angular App
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm run build -- --output-path "D:/build/AllAppsBuild/angpoc"
+        run: npm run build -- --output-path "E:/BuildTest/AllAppsBuild/angpoc"
 
       - name: Verify build output
         shell: powershell
         run: |
-          Write-Host "Contents of D:/build/AllAppsBuild/angpoc:"
-          Get-ChildItem -Path "D:/build/AllAppsBuild/angpoc" -Recurse
+          Write-Host "Contents of E:/BuildTest/AllAppsBuild/angpoc:"
+          Get-ChildItem -Path "E:/BuildTest/AllAppsBuild/angpoc" -Recurse
