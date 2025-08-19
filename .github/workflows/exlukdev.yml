@@ -2,16 +2,11 @@ name: ExlUK-Angular POC-ExlUK
 
 on:
   workflow_dispatch:   # Manual trigger
-  push:
-    branches:
-      - main
-    paths:
-      - 'my-angular-app/**'   # Only run if files in Angular folder change
-      - '.github/workflows/ci-cd-angular.yml'  # Also run if this workflow changes
+  
 
 jobs:
   build:
-    runs-on: [self-hosted,exlukdev]
+    runs-on: [self-hosted, exlukdev]
 
     steps:
       - name: Checkout code
@@ -38,7 +33,7 @@ jobs:
       - name: Build Angular App
         shell: powershell
         working-directory: ./my-angular-app
-        run: npm run build -- --output-path "E:/BuildTest//AllAppsBuild/angpoc"
+        run: npm run build -- --output-path "E:/BuildTest/AllAppsBuild/angpoc"
 
       - name: Verify build output
         shell: powershell
